@@ -35,12 +35,12 @@ def generate_response(llama, user_input):
         response = llama.get_response(user_input)
         end_time = time.time()  # End timing
         time_taken = end_time - start_time  # Calculate time taken
-          # Count input words # Count output words
+        
         return {
             "Response": response,
             "Input": user_input,
             "Time": time_taken
-        }  # Return additional info as a dictionary
+        }  
     except Exception as e:
         logging.error(f"Error generating response: {e}")  # Log the error
         st.error("Sorry, I couldn't generate a response.")  # Keep user-facing error message
@@ -53,6 +53,15 @@ logging.basicConfig(filename='llamachat.log', filemode='w', level=logging.INFO) 
 def load_questions(file_path):
     with open(file_path, 'r') as file:
         return [line.strip() for line in file if line.strip()]  # Filter out empty lines
+
+def display_chat_history():
+    """Display chat history with the latest query on top."""
+    for entry in reversed(st.session_state.chat_history):
+        st.write(f"**User**  : {entry['Input']}")
+        st.write(f"**Llama** : {entry['Response']}")
+        st.write(f"**Word Count** : {len(entry['Response'])}")
+        st.write(f"**Time Taken** : {entry['Time']}")
+        st.divider()
 
 def main():
     st.set_page_config(layout="wide")  # Set layout to wide
@@ -102,11 +111,7 @@ def main():
         st.session_state.chat_history.append(result)
 
     # Display chat history
-    for entry in reversed(st.session_state.chat_history):
-        st.write(f"**User**  : {entry['Input']}")
-        st.write(f"**Llama** : {entry['Response']}")
-        st.write(f"**Word Count** : {len(entry['Response'])}")
-        st.write(f"**Time Taken** ; {entry['Time']}") 
+    display_chat_history()  # Call the function to display chat history
 
 if __name__ == "__main__":
     main()
