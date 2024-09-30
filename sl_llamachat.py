@@ -64,6 +64,7 @@ def display_chat_history():
         st.divider()
 
 TONES = {
+    "Neutral": "Neutral",
     "Analytical": "This tone focuses on breaking down arguments into smaller parts, evaluating their logic, and ensuring clarity. It’s often precise, critical, and detailed.",
     "Speculative": "A more exploratory and imaginative tone that considers possibilities, hypotheses, or abstract ideas that go beyond concrete facts.",
     "Socratic": "Based on Socrates’ method, this tone is questioning and inquisitive, often encouraging the other person to reflect on their beliefs and assumptions.",
@@ -80,6 +81,9 @@ TONES = {
 
 def build_prompt(tone, user_input):
     """Builds a prompt based on the selected tone and user input."""
+    if tone is None or tone == "Neutral":  # Check if tone is None or "None"
+        return user_input  # Return user input if tone is None or "None"
+
     prompt = (
         "You are an expert in discussing philosophical questions. "
         f"Your tone is: **{tone}** in nature. "
