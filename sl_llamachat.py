@@ -63,7 +63,7 @@ def display_chat_history():
         st.write(f"**Time Taken** : {entry['Time']}")
         st.divider()
 
-TONE_EXPLANATIONS = {
+TONES = {
     "Analytical": "This tone focuses on breaking down arguments into smaller parts, evaluating their logic, and ensuring clarity. It’s often precise, critical, and detailed.",
     "Speculative": "A more exploratory and imaginative tone that considers possibilities, hypotheses, or abstract ideas that go beyond concrete facts.",
     "Socratic": "Based on Socrates’ method, this tone is questioning and inquisitive, often encouraging the other person to reflect on their beliefs and assumptions.",
@@ -99,11 +99,11 @@ def main():
     max_tokens  = st.sidebar.number_input("Max Tokens", min_value=1, max_value=128000, value=2000, step=100)
 
     # Add tone selection in the sidebar
-    selected_tone = st.sidebar.selectbox("Select Tone", TONE_OPTIONS)  # Tone selection dropdown
+    selected_tone = st.sidebar.selectbox("Select Tone", TONES.keys())  # Tone selection dropdown
 
     # Button to explain the selected tone
     if st.sidebar.button("Explain Tone"):
-        st.sidebar.write(TONE_EXPLANATIONS[selected_tone])  # Display explanation for the selected tone
+        st.sidebar.write(TONES[selected_tone])  # Display explanation for the selected tone
 
     # Add button to clear chat history in the sidebar
     if st.sidebar.button("Clear History"):
