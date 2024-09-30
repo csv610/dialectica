@@ -52,7 +52,7 @@ logging.basicConfig(filename='llamachat.log', filemode='w', level=logging.INFO) 
 @st.cache_resource
 def load_questions(file_path):
     with open(file_path, 'r') as file:
-        return file.readlines()
+        return [line.strip() for line in file if line.strip()]  # Filter out empty lines
 
 def main():
     st.set_page_config(layout="wide")  # Set layout to wide
@@ -78,10 +78,11 @@ def main():
     # Load questions from questions.txt
     questions = load_questions('questions.txt')  # Use cached function to load questions
     
-    # Add button to select a random question
-    if st.button("Get Random Question"):
-        random_question = random.choice(questions).strip()  # Select a random question
+    # Add button to select a random question on the right side
+    if st.sidebar.button("Get Random Question", key="random_question_button"):
+        random_question = random.choice(questions)  # Select a random non-empty question
         st.session_state.user_input = random_question  # Set user input to the random question
+        st.write(f"**Random Question**: {random_question}")  # Print the random question
 
     # Chat interface
     if 'user_input' not in st.session_state:
