@@ -3,11 +3,12 @@ import ollama
 import sys
 import logging 
 import time  
-import datetime  # Import datetime module
-import random  # Import random module
+import datetime  
+import random 
+import os
 
 class LlamaModel:
-    def __init__(self, model_name="llama3.2", temperature=0.5, max_tokens=1000):
+    def __init__(self, model_name="llama3.2", temperature=0.8, max_tokens=4096):
         self.model_name = model_name
         self.temperature = temperature
         self.max_tokens = max_tokens
@@ -29,12 +30,12 @@ class LlamaModel:
 def get_llama_model(model_name, temperature, max_tokens):
     return LlamaModel(model_name=model_name, temperature=temperature, max_tokens=max_tokens)
     
-def generate_response(llama, user_input):
+def generate_response(llm, user_input):
     try:
-        start_time = time.time()  # Start timing
-        response = llama.get_response(user_input)
-        end_time = time.time()  # End timing
-        time_taken = end_time - start_time  # Calculate time taken
+        start_time = time.time() 
+        response = llm.get_response(user_input)
+        end_time = time.time() 
+        time_taken = end_time - start_time 
         
         return {
             "Response": response,
@@ -92,15 +93,14 @@ def build_prompt(tone, user_input):
     )
     return prompt
 
-def main():
-    st.set_page_config(layout="wide")  # Set layout to wide
 
+def config_panel():
     # Sidebar for model configuration
     st.sidebar.header("Dialectica")
     
     model_name  = st.sidebar.selectbox("Select Model", ["llama3.2", "llama3.1"], index=0)
-    temperature = st.sidebar.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
-    max_tokens  = st.sidebar.number_input("Max Tokens", min_value=1, max_value=128000, value=2000, step=100)
+    temperature = st.sidebar.slider("Temperature", 0.1, 1.0, 0.8, 0.1)
+    max_tokens  = st.sidebar.number_input("Max Tokens", min_value=1, max_value=4096, value=4000, step=100)
 
     # Add tone selection in the sidebar
     selected_tone = st.sidebar.selectbox("Select Tone", TONES.keys())  # Tone selection dropdown
@@ -117,31 +117,41 @@ def main():
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
 
-    # Initialize LlamaModel
-    llama = get_llama_model(model_name, temperature, max_tokens)
-
-    # Load questions from questions.txt
-    questions = load_questions('questions.txt')  # Use cached function to load questions
-    
-    # Add button to select a random question on the right side
-    if st.button("Get Random Question", key="random_question_button"):
-        random_question = random.choice(questions)  # Select a random non-empty question
-        st.session_state.user_input = random_question  # Set user input to the random question
-
-    # Chat interface
-    if 'user_input' not in st.session_state:
-        st.session_state.user_input = ""
-
-    user_input = st.text_input("Enter your input:", value="", key="user_input")  # Set value to empty initially
+    llm = get_llama_model(model_name, temperature, max_tokens)
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Get current time
     st.sidebar.write(f"Time: {current_time}")  # Display current time in sidebar
 
+    return llm, selected_tone
+
+def get_new_question():
+
+    if os.path.exists('questions.txt'):
+        questions = load_questions('questions.txt')  # Use cached function to load questions
+        # Add button to select a random question on the right side
+        if st.button("Get Random Question", key="random_question_button"):
+            random_question = random.choice(questions)  # Select a random non-empty question
+            st.session_state.user_input = random_question  # Set user input to the random question
+    # Chat interface
+
+    if 'user_input' not in st.session_state:
+        st.session_state.user_input = ""
+
+    question = st.text_input("Enter your input:", value="", key="user_input")  # Set value to empty initially
+    return question
+
+def main():
+    st.set_page_config(layout="wide")  # Set layout to wide
+
+    llm, tone = config_panel()  # Pass model_name, temperature, and max_tokens
+
+    question = get_new_question()
+    
     # Automatically send message when user input is provided and Enter is pressed
-    if user_input:  # Check if there is any input
+    if question:  # Check if there is any input
         with st.spinner("Generating response..."): 
-            prompt = build_prompt(selected_tone, user_input)
-            result = generate_response(llama, prompt)              
+            prompt = build_prompt(tone, question)
+            result = generate_response(llm, prompt)              
         st.session_state.chat_history.append(result)
 
     # Display chat history
