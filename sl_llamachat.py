@@ -81,9 +81,9 @@ TONE_EXPLANATIONS = {
 def build_prompt(tone, user_input):
     """Builds a prompt based on the selected tone and user input."""
     prompt = (
-        f"You are an expert in discussing philosophical questions.\n"
-        f"Your tone is: **{tone}**.\n"
-        f"Please provide a thoughtful and detailed answer to the following question:\n"
+        "You are an expert in discussing philosophical questions. "
+        f"Your tone is: **{tone}** in nature. "
+        "Please provide a thoughtful and detailed answer to the following question: "
         f"**{user_input}**"
     )
     return prompt
