@@ -137,18 +137,11 @@ def main():
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Get current time
     st.sidebar.write(f"Time: {current_time}")  # Display current time in sidebar
 
-    # Build the prompt using the selected tone and user input
-    prompt = build_prompt(selected_tone, user_input)
-
-    # Generate the response using the built prompt
-    result = generate_response(llama, prompt)  # Pass the prompt to get the result as a dictionary
-
     # Automatically send message when user input is provided and Enter is pressed
     if user_input:  # Check if there is any input
-        
-        with st.spinner("Generating response..."):  # Add spinner here
-            result = generate_response(llama, user_input)  # Get the result as a dictionary
-            
+        with st.spinner("Generating response..."): 
+            prompt = build_prompt(selected_tone, user_input)
+            result = generate_response(llama, prompt)              
         st.session_state.chat_history.append(result)
 
     # Display chat history
