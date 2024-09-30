@@ -60,7 +60,7 @@ def main():
     # Sidebar for model configuration
     st.sidebar.header("Dialectica")
     
-    model_name  = st.sidebar.selectbox("Select Model", ["llama3.1", "llama3.2"], index=0)
+    model_name  = st.sidebar.selectbox("Select Model", ["llama3.2", "llama3.1"], index=0)
     temperature = st.sidebar.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     max_tokens  = st.sidebar.number_input("Max Tokens", min_value=1, max_value=128000, value=2000, step=100)
 
