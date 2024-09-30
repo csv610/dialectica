@@ -63,6 +63,31 @@ def display_chat_history():
         st.write(f"**Time Taken** : {entry['Time']}")
         st.divider()
 
+TONE_EXPLANATIONS = {
+    "Analytical": "This tone focuses on breaking down arguments into smaller parts, evaluating their logic, and ensuring clarity. It’s often precise, critical, and detailed.",
+    "Speculative": "A more exploratory and imaginative tone that considers possibilities, hypotheses, or abstract ideas that go beyond concrete facts.",
+    "Socratic": "Based on Socrates’ method, this tone is questioning and inquisitive, often encouraging the other person to reflect on their beliefs and assumptions.",
+    "Didactic": "A teaching or instructive tone, where the speaker aims to impart knowledge or explain complex concepts in a clear, authoritative manner.",
+    "Dialectical": "This tone is characterized by an exchange of ideas between opposing viewpoints, with the aim of arriving at a higher truth through reasoned dialogue.",
+    "Cynical": "A more skeptical and sometimes dismissive tone, often critical of established ideas or institutions, questioning motives, and highlighting flaws.",
+    "Optimistic": "A hopeful and constructive tone that focuses on positive possibilities, growth, or ideal outcomes in philosophical exploration.",
+    "Pessimistic": "This tone reflects a more doubtful or negative outlook on human nature, existence, or philosophical concepts, often focusing on limitations and problems.",
+    "Empirical": "A tone that emphasizes experience, observation, and evidence, often associated with philosophers who stress the importance of real-world data and facts in their reasoning.",
+    "Existential": "A deeply personal and reflective tone that deals with individual experience, meaning, and the human condition, often touching on themes like freedom, isolation, and choice.",
+    "Normative": "This tone deals with values, ethics, and how things should be. It often involves moral judgments or considerations of right and wrong.",
+    "Absurdist": "A tone that reflects on the inherent contradictions or lack of meaning in life, often humorously or paradoxically, following in the tradition of philosophers like Camus."
+}
+
+def build_prompt(tone, user_input):
+    """Builds a prompt based on the selected tone and user input."""
+    prompt = (
+        f"You are an expert in discussing philosophical questions.\n"
+        f"Your tone is: **{tone}**.\n"
+        f"Please provide a thoughtful and detailed answer to the following question:\n"
+        f"**{user_input}**"
+    )
+    return prompt
+
 def main():
     st.set_page_config(layout="wide")  # Set layout to wide
 
@@ -72,6 +97,13 @@ def main():
     model_name  = st.sidebar.selectbox("Select Model", ["llama3.2", "llama3.1"], index=0)
     temperature = st.sidebar.slider("Temperature", 0.1, 1.0, 0.5, 0.1)
     max_tokens  = st.sidebar.number_input("Max Tokens", min_value=1, max_value=128000, value=2000, step=100)
+
+    # Add tone selection in the sidebar
+    selected_tone = st.sidebar.selectbox("Select Tone", TONE_OPTIONS)  # Tone selection dropdown
+
+    # Button to explain the selected tone
+    if st.sidebar.button("Explain Tone"):
+        st.sidebar.write(TONE_EXPLANATIONS[selected_tone])  # Display explanation for the selected tone
 
     # Add button to clear chat history in the sidebar
     if st.sidebar.button("Clear History"):
@@ -100,6 +132,12 @@ def main():
 
     current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Get current time
     st.sidebar.write(f"Time: {current_time}")  # Display current time in sidebar
+
+    # Build the prompt using the selected tone and user input
+    prompt = build_prompt(selected_tone, user_input)
+
+    # Generate the response using the built prompt
+    result = generate_response(llama, prompt)  # Pass the prompt to get the result as a dictionary
 
     # Automatically send message when user input is provided and Enter is pressed
     if user_input:  # Check if there is any input
