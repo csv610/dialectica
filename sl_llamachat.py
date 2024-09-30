@@ -57,7 +57,7 @@ def load_questions(file_path):
 def display_chat_history():
     """Display chat history with the latest query on top."""
     for entry in reversed(st.session_state.chat_history):
-        st.write(f"**User**  : {entry['Input']}")
+        st.text_input("User", value=entry['Input'], disabled=True)  # Non-editable text input for User
         st.write(f"**Llama** : {entry['Response']}")
         st.write(f"**Word Count** : {len(entry['Response'])}")
         st.write(f"**Time Taken** : {entry['Time']}")
@@ -91,7 +91,6 @@ def main():
     if st.button("Get Random Question", key="random_question_button"):
         random_question = random.choice(questions)  # Select a random non-empty question
         st.session_state.user_input = random_question  # Set user input to the random question
-        st.write(f"**Random Question**: {random_question}")  # Print the random question
 
     # Chat interface
     if 'user_input' not in st.session_state:
