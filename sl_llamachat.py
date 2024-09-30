@@ -57,8 +57,8 @@ def load_questions(file_path):
 def display_chat_history():
     """Display chat history with the latest query on top."""
     for entry in reversed(st.session_state.chat_history):
-        st.text_input("User", value=entry['Input'], disabled=True)  # Non-editable text input for User
-        st.write(f"**Llama** : {entry['Response']}")
+        st.write(f"**👤 User**: {entry['Input']}")  # Display user input with emoji
+        st.write(f"**🦙 Llama**: {entry['Response']}")  # Display Llama response with llama emoji
         st.write(f"**Word Count** : {len(entry['Response'])}")
         st.write(f"**Time Taken** : {entry['Time']}")
         st.divider()
