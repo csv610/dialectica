@@ -79,7 +79,7 @@ def main():
     questions = load_questions('questions.txt')  # Use cached function to load questions
     
     # Add button to select a random question on the right side
-    if st.sidebar.button("Get Random Question", key="random_question_button"):
+    if st.button("Get Random Question", key="random_question_button"):
         random_question = random.choice(questions)  # Select a random non-empty question
         st.session_state.user_input = random_question  # Set user input to the random question
         st.write(f"**Random Question**: {random_question}")  # Print the random question
@@ -102,7 +102,7 @@ def main():
         st.session_state.chat_history.append(result)
 
     # Display chat history
-    for entry in st.session_state.chat_history:
+    for entry in reversed(st.session_state.chat_history):
         st.write(f"**User**  : {entry['Input']}")
         st.write(f"**Llama** : {entry['Response']}")
         st.write(f"**Word Count** : {len(entry['Response'])}")
